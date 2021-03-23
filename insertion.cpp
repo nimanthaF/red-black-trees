@@ -42,7 +42,7 @@ void RBTree::insert(int key) {
 	NodePtr y = nullptr;
 	NodePtr x = this->root;
 
-	while (x != leaf) {
+	while (x!=leaf) {
 		y = x;
 		if (node->data < x->data) {
 			x = x->left;
