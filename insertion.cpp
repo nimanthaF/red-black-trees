@@ -30,6 +30,7 @@ public:
 	void RBInsert(NodePtr k);
 	void leftRotate(NodePtr x);
 	void rightRotate(NodePtr x);
+	void print_out(NodePtr root);
 };
 
 void RBTree::insert(int key) {
@@ -77,8 +78,49 @@ void RBTree::insert(int key) {
 	RBInsert(node);
 }
 
-void RBTree::RBInsert(NodePtr k) {
-
+// 1- red and 0- black
+void RBTree::RBInsert(NodePtr z){
+	NodePtr y;          //this is the sibiling of the parent (uncle node)
+	
+	while (z->p->color == 1) {
+		if (z->p == z->p->p->left) {
+			y = z->p->p->right;
+			if (y->color == 1) {
+				z->p->color = 0;
+				y->color = 0;
+				z->p->p->color = 1;
+				z = z->p->p;
+			}
+			else if (z == z->p->right) {
+				z = z->p;
+				leftRotate(z);
+			}
+			else {
+				z->p->color = 0;
+				z->p->p->color = 1;
+				rightRotate(z->p->p);
+			}
+		}
+		else {
+			y = z->p->p->left;
+			if (y->color == 1) {
+				z->p->color = 0;
+				y->color = 0;
+				z->p->p->color = 1;
+				z = z->p->p;
+			}
+			else if (z == z->p->left) {
+				z = z->p;
+				rightRotate(z);
+			}
+			else {
+				z->p->color = 0;
+				z->p->p->color = 1;
+				leftRotate(z->p->p);
+			}
+		}
+	}
+	this->root->color = 0;
 }
 
 void RBTree::leftRotate(NodePtr x) {
@@ -127,8 +169,51 @@ void RBTree::rightRotate(NodePtr x) {
 	y->p = x;
 }
 
+void RBTree::print_out(NodePtr val)
+{
+	if (val != NULL)
+	{
+		
+		if (val->color == 0)
+			printf("black ");
+		else
+			printf("red ");
+		if (val->p != NULL)
+			printf("%d ", root->p->data);
+		else
+			printf("- ");
+		if (val->left != NULL)
+			printf("%d ", val->left->data);
+		else
+			printf("- ");
+		if (val->right != NULL)
+			printf("%d ", root->right->data);
+		else
+			printf("- ");
+		printf("\n");
+
+		print_out(val->left);
+		if (root->right != NULL)
+		{
+			print_out(val->right);
+		}
+	}
+}
+
+
 int main()
 {
+	RBTree bst;
+	bst.insert(8);
+	bst.insert(18);
+	bst.insert(5);
+	bst.insert(15);
+	bst.insert(17);
+	bst.insert(25);
+	bst.insert(40);
+	bst.insert(80);
+
+	
 
 	system("pause");
 	return 0;
