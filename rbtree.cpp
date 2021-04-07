@@ -3,27 +3,24 @@
 
 using namespace std;
 
-// data structure that represents a node in the tree
+
 class Node {
 public:
-	int data; // holds the key
-	Node *p; // pointer to the parent
-	Node *left; // pointer to left child
-	Node *right; // pointer to right child
+	int data; 
+	Node *p; 
+	Node *left; 
+	Node *right; 
 	int color; // 1 -> Red, 0 -> Black
 };
 
-typedef Node *NodePtr;
 
-// class RBTree implements the operations in Red Black Tree
+
 class RBTree {
 private:
-	NodePtr root;
-	NodePtr TNULL;
+	Node * root;
+	Node * TNULL;
 
-	// initializes the nodes with appropirate values
-	// all the pointers are set to point to the null pointer
-	void initializeNULLNode(NodePtr node, NodePtr p) {
+	void initializeNULLNode(Node * node, Node * p) {
 		node->data = 0;
 		node->p = p;
 		node->left = NULL;
@@ -31,7 +28,7 @@ private:
 		node->color = 0;
 	}
 
-	void preOrderHelper(NodePtr node) {
+	void preOrderHelper(Node * node) {
 		if (node != TNULL) {
 			cout<<node->data<<" ";
 			preOrderHelper(node->left);
@@ -39,15 +36,21 @@ private:
 		} 
 	}
 
-	void inOrderHelper(NodePtr node) {
+	void inOrderHelper(Node * node) {
 		if (node != TNULL) {
 			inOrderHelper(node->left);
-			cout<<node->data<<" ";
+			cout<<node->data;
+			if(node->color==1){
+				cout<<"(red)";
+			}else{
+				cout<<"(black)";
+			}
+			cout<<" -> ";
 			inOrderHelper(node->right);
 		} 
 	}
 
-	void postOrderHelper(NodePtr node) {
+	void postOrderHelper(Node * node) {
 		if (node != TNULL) {
 			postOrderHelper(node->left);
 			postOrderHelper(node->right);
@@ -55,7 +58,7 @@ private:
 		} 
 	}
 
-	NodePtr searchTreeHelper(NodePtr node, int key) {
+	Node * searchTreeHelper(Node * node, int key) {
 		if (node == TNULL || key == node->data) {
 			return node;
 		}
@@ -66,9 +69,8 @@ private:
 		return searchTreeHelper(node->right, key);
 	}
 
-	// fix the rb tree modified by the delete operation
-	void fixDelete(NodePtr x) {
-		NodePtr s;
+	void fixDelete(Node * x) {
+		Node * s;
 		while (x != root && x->color == 0) {
 			if (x == x->p->left) {
 				s = x->p->right;
@@ -136,7 +138,7 @@ private:
 	}
 
 
-	void rbTransplant(NodePtr u, NodePtr v){
+	void rbTransplant(Node * u, Node * v){
 		if (u->p == NULL) {
 			root = v;
 		} else if (u == u->p->left){
@@ -147,10 +149,10 @@ private:
 		v->p = u->p;
 	}
 
-	void deleteNodeHelper(NodePtr node, int key) {
+	void deleteNodeHelper(Node * node, int key) {
 		// find the node containing key
-		NodePtr z = TNULL;
-		NodePtr x, y;
+		Node * z = TNULL;
+		Node * x, *y;
 		while (node != TNULL){
 			if (node->data == key) {
 				z = node;
@@ -200,8 +202,8 @@ private:
 	}
 	
 	// fix the red-black tree
-	void fixInsert(NodePtr k){
-		NodePtr u;
+	void fixInsert(Node * k){
+		Node * u;
 		while (k->p->color == 1) {
 			if (k->p == k->p->p->right) {
 				u = k->p->p->left; // uncle
@@ -250,6 +252,13 @@ private:
 		root->color = 0;
 	}
 
+	// find the node with the maximum key
+	Node * maximum(Node * node) {
+		while (node->right != TNULL) {
+			node = node->right;
+		}
+		return node;
+	}
 
 
 public:
@@ -281,28 +290,22 @@ public:
 
 	// search the tree for the key k
 	// and return the corresponding node
-	NodePtr searchTree(int k) {
+	Node * searchTree(int k) {
 		return searchTreeHelper(this->root, k);
 	}
 
 	// find the node with the minimum key
-	NodePtr minimum(NodePtr node) {
+	Node * minimum(Node * node) {
 		while (node->left != TNULL) {
 			node = node->left;
 		}
 		return node;
 	}
 
-	// find the node with the maximum key
-	NodePtr maximum(NodePtr node) {
-		while (node->right != TNULL) {
-			node = node->right;
-		}
-		return node;
-	}
+	
 
 	// find the successor of a given node
-	NodePtr successor(NodePtr x) {
+	Node * successor(Node * x) {
 		// if the right subtree is not null,
 		// the successor is the leftmost node in the
 		// right subtree
@@ -312,7 +315,7 @@ public:
 
 		// else it is the lowest ancestor of x whose
 		// left child is also an ancestor of x.
-		NodePtr y = x->p;
+		Node * y = x->p;
 		while (y != TNULL && x == y->right) {
 			x = y;
 			y = y->p;
@@ -321,7 +324,7 @@ public:
 	}
 
 	// find the predecessor of a given node
-	NodePtr predecessor(NodePtr x) {
+	Node * predecessor(Node * x) {
 		// if the left subtree is not null,
 		// the predecessor is the rightmost node in the 
 		// left subtree
@@ -329,7 +332,7 @@ public:
 			return maximum(x->left);
 		}
 
-		NodePtr y = x->p;
+		Node * y = x->p;
 		while (y != TNULL && x == y->left) {
 			x = y;
 			y = y->p;
@@ -339,8 +342,8 @@ public:
 	}
 
 	// rotate left at node x
-	void leftRotate(NodePtr x) {
-		NodePtr y = x->right;
+	void leftRotate(Node * x) {
+		Node * y = x->right;
 		x->right = y->left;
 		if (y->left != TNULL) {
 			y->left->p = x;
@@ -358,8 +361,8 @@ public:
 	}
 
 	// rotate right at node x
-	void rightRotate(NodePtr x) {
-		NodePtr y = x->left;
+	void rightRotate(Node * x) {
+		Node * y = x->left;
 		x->left = y->right;
 		if (y->right != TNULL) {
 			y->right->p = x;
@@ -380,15 +383,15 @@ public:
 	// and fix the tree
 	void insert(int key) {
 		// Ordinary Binary Search Insertion
-		NodePtr node = new Node;
+		Node * node = new Node;
 		node->p = NULL;
 		node->data = key;
 		node->left = TNULL;
 		node->right = TNULL;
 		node->color = 1; // new node must be red
 
-		NodePtr y = NULL;
-		NodePtr x = this->root;
+		Node * y = NULL;
+		Node * x = this->root;
 
 		while (x != TNULL) {
 			y = x;
@@ -424,7 +427,7 @@ public:
 		fixInsert(node);
 	}
 
-	NodePtr getRoot(){
+	Node * getRoot(){
 		return this->root;
 	}
 
@@ -435,21 +438,52 @@ public:
 
 	// print the tree structure on the screen
 
+	void maxNode(){
+		maximum(root);
+	}
 
 };
 
 int main() {
 	RBTree bst;
-	bst.insert(8);
-	bst.insert(5);
-	bst.insert(15);
-	bst.insert(12);
-	bst.insert(19);
-	bst.insert(9);
-	bst.insert(13);
-	bst.insert(23);
 
+	int i=0;
+	while (i<1){
+		int operation;
+		cout<<"1 - Insertion	2 - Deletion	3 - search maximum	  4 - search minimum	5 - print the tree	 6 - Exit\n";
+		cout<<"Enter the operation you want:";
+		cin>>operation;
 
-	bst.inorder();
+		if(operation==1){
+			int num_nodes;
+			cout<<"how many nodes you planning to enter? : ";
+			cin>>num_nodes;
+
+			cout<<"Enter your values:\n";
+			for(int i=0;i<num_nodes;i++){
+				int x;
+				cin>>x;
+				bst.insert(x);
+			}
+		}else if(operation==2){
+			int del_node;
+			cin>>del_node;
+			bst.deleteNode(del_node);
+		}
+		else if(operation==3){
+		
+		}
+		else if(operation==4){
+			
+		}
+		else if(operation==5){
+			
+		}
+		else if(6){
+			i=2;
+		}
+
+	}
+	
 	return 0;
 }
