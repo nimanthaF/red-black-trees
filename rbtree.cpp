@@ -260,6 +260,26 @@ private:
 		return node;
 	}
 
+	void printHelper(Node* root, string indent, bool last) {
+		// print the tree structure on the screen
+	   	if (root != TNULL) {
+		   cout<<indent;
+		   if (last) {
+		      cout<<"R----";
+		      indent += "     ";
+		   } else {
+		      cout<<"L----";
+		      indent += "|    ";
+		   }
+            
+           string sColor = root->color?"RED":"BLACK";
+		   cout<<root->data<<"("<<sColor<<")"<<endl;
+		   printHelper(root->left, indent, false);
+		   printHelper(root->right, indent, true);
+		}
+		// cout<<root->left->data<<endl;
+	}
+
 
 public:
 	RBTree() {
@@ -442,6 +462,12 @@ public:
 		maximum(root);
 	}
 
+	void prettyPrint() {
+	    if (root) {
+    		printHelper(this->root, "", true);
+	    }
+	}
+
 };
 
 int main() {
@@ -477,7 +503,16 @@ int main() {
 			
 		}
 		else if(operation==5){
-			
+			Node* ptr=new Node;
+			ptr=bst.getRoot();
+
+			//if root node has no color means there is no root node
+			if(ptr->color!=0 || ptr->color!=1){
+				cout<<"Tree is empty!"<<endl;
+			}else{
+				cout<<ptr<<endl;
+				bst.prettyPrint();
+			}	
 		}
 		else if(6){
 			i=2;
